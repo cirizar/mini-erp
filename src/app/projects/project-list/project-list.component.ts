@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs';
 import { Project } from '../project.model';
@@ -12,26 +12,37 @@ import { ProjectService } from '../project.service';
 })
 export class ProjectListComponent implements OnInit, OnDestroy {
   projects$!: Observable<Project[]>;
-  activeProjects$!: Observable<Project[]>; 
+
   private destroy$ = new Subject<void>();
 
-  constructor(private service: ProjectService) { }
+  constructor(private service: ProjectService, private zone: NgZone) { }
 
   ngOnInit(): void {
     // Start polling every 5s
-    this.projects$ = this.service.startPolling(5000);
-
-    // Alternatively, to update the BehaviorSubject on each poll:
-    this.service.startPolling(5000)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(list => console.log('Polled Projects', list));
+   this.loadList();
+    window.addEventListener('storage', this.onStorageEvent);
   }
+
+  private loadList(): void {
+    this.projects$ = this.service.getProjects();
+  }
+
+  private onStorageEvent = (event: StorageEvent) => {
+    if (event.key === 'projects-updated') {
+      this.zone.run(() => this.loadList());
+    }
+  };
 
   delete(id: number): void {
-    this.service.deleteProject(id).subscribe();
+    this.service.deleteProject(id).subscribe(() => {
+      localStorage.setItem('projects-updated', Date.now().toString());
+      // optional immediate reload
+      this.loadList();
+    });
   }
 
-  ngOnDestroy():void{
+  ngOnDestroy(): void {
+    window.removeEventListener('storage', this.onStorageEvent);
     this.destroy$.next();
     this.destroy$.complete();
   }

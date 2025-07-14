@@ -1,25 +1,36 @@
-<mat-toolbar color="primary">
-  <span>Mini ERP Dashboard</span>
+<mat-toolbar color="primary" class="toolbar">
+  <span class="toolbar-title">Mini ERP Dashboard</span>
+  <span class="spacer"></span>
+  <button mat-icon-button routerLink="/projects" matTooltip="Projects">
+    <mat-icon>folder_open</mat-icon>
+  </button>
 </mat-toolbar>
 
-<div class="dashboard-grid">
-  <mat-grid-list cols="2" rowHeight="1:1" gutterSize="16px">
-    <mat-grid-tile>
-      <mat-card>
+<div class="dashboard-container">
+  <div class="cards-grid">
+    <mat-card class="dashboard-card">
+      <mat-card-header>
+        <!-- Avatar slot for the icon -->
+        <div mat-card-avatar class="card-avatar">
+          <mat-icon>assignment</mat-icon>
+        </div>
         <mat-card-title>Total Projects</mat-card-title>
-        <mat-card-content>
-          {{ total$ | async }}
-        </mat-card-content>
-      </mat-card>
-    </mat-grid-tile>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="card-number">{{ total$ | async }}</div>
+      </mat-card-content>
+    </mat-card>
 
-    <mat-grid-tile>
-      <mat-card>
+    <mat-card class="dashboard-card">
+      <mat-card-header>
+        <div mat-card-avatar class="card-avatar">
+          <mat-icon>check_circle</mat-icon>
+        </div>
         <mat-card-title>Active Projects</mat-card-title>
-        <mat-card-content>
-          {{ active$ | async }}
-        </mat-card-content>
-      </mat-card>
-    </mat-grid-tile>
-  </mat-grid-list>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="card-number">{{ active$ | async }}</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>

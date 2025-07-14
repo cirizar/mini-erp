@@ -43,12 +43,20 @@ export class ProjectFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const project: Project = { id: this.id ?? 0, ...this.form.value };
-    if (this.id) {
-      this.service.updateProject(project);
-    } else {
-      this.service.addProject(project);
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
     }
-    this.router.navigate(['/projects']);
+
+    const project: Project = { id: this.id ?? 0, ...this.form.value };
+    const action$ = this.id
+      ? this.service.updateProject(project)
+      : this.service.addProject(project);
+
+    action$.subscribe(() => {
+      // signal other tabs to reload
+      localStorage.setItem('projects-updated', Date.now().toString());
+      this.router.navigate(['/projects']);
+    });
   }
 }
