@@ -1,0 +1,8 @@
+<!-- src/app/projects/project-detail/project-detail.component.html -->
+<ng-container *ngIf="project$ | async as proj">
+  <h2>{{ proj.name }}</h2>
+  <p><strong>Description:</strong> {{ proj.description }}</p>
+  <p><strong>Status:</strong> {{ proj.status }}</p>
+  <button (click)="edit(proj.id)">Edit</button>
+  <button routerLink="/projects">Back to List</button>
+</ng-container>

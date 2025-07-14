@@ -1,0 +1,7 @@
+/* src/app/dashboard/dashboard/dashboard.component.scss */
+.dashboard-grid {
+  margin: 16px;
+}
+@media (max-width: 600px) {
+  mat-grid-list { cols: 1 !important; }
+}
